@@ -17,12 +17,12 @@ pd_ed(1)=8     ;pd_ed(2)=31
 
 dirEC='Z:\DATA\LargeScale\NcepR2_Pre\980101-981231\'
 dirTP='Z:\DATA\LargeScale\TP\NcepR2_Pre\980101-981231\'
-levname(1)='_lowlevel.txt'
-levname(2)='_Middlelevel.txt'
-levname(3)='_Hightlevel.txt'
-levname(4)='_Abovelevel.txt'
-levname(5)='_Tropsphere.txt'
-levname(6)='_AllLevels.txt'
+levname(1)='_lowlevel'
+levname(2)='_Middlelevel'
+levname(3)='_Hightlevel'
+levname(4)='_Abovelevel'
+levname(5)='_Tropsphere'
+levname(6)='_AllLevels'
 area(1)='PRD'  ;    area(2)='MLYR'
 area(3)='NPC'  ;    area(4)='NEC'
 area(5)='WTP'  ;    area(6)='ETP'
@@ -47,7 +47,7 @@ do i=1,6
       enddo
       close(10)
       do m=1,6
-      path=trim(dirEC)//'1998'//trim(area(i))//trim(levname(m))
+      path=trim(dirEC)//'1998'//trim(area(i))//trim(levname(m))//'.txt'
       open(10,file=trim(path))
       read(10,*)
       do j=1,nrec
@@ -66,7 +66,7 @@ do i=1,6
      enddo
      close(10)
      do m=1,6
-      path=trim(dirTP)//'1998'//trim(area(i))//trim(levname(m))
+      path=trim(dirTP)//'1998'//trim(area(i))//trim(levname(m))//'.txt'
       open(10,file=trim(path))
       read(10,*)
       do j=1,nrec
@@ -92,7 +92,7 @@ open(20,file=trim(path))
 write(20,908)'DATE','HOUR','T_ls(k/day)','Q_ls(k/day)','U(m/s)', &
      'V(m/s)','moisture(kg/kg)','HGT(m)','AIR(K)','Adj_omega(pa/s)',&
      'RH(%)','Theta(K)','Q1(k/day)','Q2(k/day)','HADQ(K/day)',&
-     'VADQ(K/day)','TCHQ(K/day)','HADT(K/day)','HADT(K/day)',&
+     'VADQ(K/day)','TCHQ(K/day)','HADT(K/day)','VADT(K/day)',&
      'TCHT(K/day)','Ori_omega(pa/s)'
 908   format(1X,A10,1X,A5,19(1X,A15))
 do i=ids,ide
@@ -119,9 +119,9 @@ do m=1,6
   close(20)
   close(30)
   enddo 
-  path='D:\MyPaper\Phd01\data\1998\'//trim(area(m))//'raw_ori.txt'  
+  path='D:\MyPaper\Phd01\data\1998\'//trim(area(m))//'_raw_ori.txt'  
   open(20,file=trim(path))
-  path='D:\MyPaper\Phd01\data\1998\'//trim(area(m))//'raw_fn4days.txt'  
+  path='D:\MyPaper\Phd01\data\1998\'//trim(area(m))//'_raw_fn4days.txt'  
   open(30,file=trim(path))
    do j=ids,ide
     	do k=1,17
