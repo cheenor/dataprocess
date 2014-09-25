@@ -70,8 +70,25 @@ for nm in rgns:
 ######## plotting 
     for m in range(1,19):
         zdat=dat[:,:,m]
+        zdatx=[]
+        for zdd in zdat:
+            for zd in zdd:
+                zdatx.append(zd)
+        lels=[]
+        mix=0.85*min(zdatx)
+        mux=0.85*max(zdatx)
+        del zdatx
+        if mix<0 :
+            for lx in range(0,3):
+                lels.append(mix+(0-mix)*lx/3)
+            for lx in range(0,3):
+                lels.append((mux-0)*(lx+1)/3)
+        else:
+             deltalev=(mux-mix)/6
+             for lx in range(0,6):
+                 lels.append(mix+lx*deltalev)
         fig=plt.figure(figsize=(20,4))
-        CS=plt.contour(xdat,ylevs,zdat,6)
+        CS=plt.contour(xdat,ylevs,zdat,levels=lels)
         plt.clabel(CS,inline=1,fontsize=12)
         plt.axis([0, 368, 1000, 10])
         plt.title(nms[m])
