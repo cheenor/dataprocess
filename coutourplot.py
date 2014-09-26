@@ -23,10 +23,31 @@ datapath='D:/MyPaper/Phd01/data/1998/'
 matplotlib.rcParams['xtick.direction'] = 'in'
 matplotlib.rcParams['ytick.direction'] = 'in'
 matplotlib.rcParams['contour.negative_linestyle'] = 'dashed'
-matplotlib.rcParams['savefig.dpi'] = 450
+matplotlib.rcParams['savefig.dpi'] = 100
 #####
 ylevs=[1000, 925, 850, 700, 600, 500, 400, 300, 250, 
        200, 150, 100, 70, 50, 30, 20, 10]
+lels=np.ndarray(shape=(19,8), dtype=float)  # set for contour levels of diff vars
+lels[0,:]=[-8,-6,-4,-2,2,4,6,8]
+lels[1,:]=[-8,-6,-4,-2,2,4,6,8]
+lels[2,:]=[-15,-10,-5,5,10,15,20,25]
+lels[3,:]=[-8,-6,-4,-2,2,4,6,8]
+lels[4,:]=[0.003,0.006,0.009,0.012,0.015,0.018,0.021,0.024]
+lels[5,:]=[100,300,500,700,900,1200,1500,2000]
+lels[6,:]=[210,225,240,250,260,270,280,290]
+lels[7,:]=[-0.2,-0.15,-0.1,-0.05,0.05,0.1,0.15,0.2]
+lels[8,:]=[10,20,30,40,50,60,70,80]
+lels[9,:]=[290,300,310,320,330,340,360,400]
+lels[10,:]=[-8,-6,-4,-2,2,4,6,8]
+lels[11,:]=[-8,-6,-4,-2,2,4,6,8]
+lels[12,:]=lels[1,:]/4
+lels[13,:]=lels[1,:]/2
+lels[14,:]=lels[1,:]/2
+lels[15,:]=lels[1,:]/4
+lels[16,:]=lels[1,:]/2
+lels[17,:]=lels[1,:]/2
+lels[18,:]=[-0.2,-0.15,-0.1,-0.05,0.05,0.1,0.15,0.2]
+#
 f=open(datapath+'date_and_name.txt')
 ff=f.readlines()
 tmp1=[]
@@ -70,25 +91,8 @@ for nm in rgns:
 ######## plotting 
     for m in range(1,19):
         zdat=dat[:,:,m]
-        zdatx=[]
-        for zdd in zdat:
-            for zd in zdd:
-                zdatx.append(zd)
-        lels=[]
-        mix=0.85*min(zdatx)
-        mux=0.85*max(zdatx)
-        del zdatx
-        if mix<0 :
-            for lx in range(0,3):
-                lels.append(mix+(0-mix)*lx/3)
-            for lx in range(0,3):
-                lels.append((mux-0)*(lx+1)/3)
-        else:
-             deltalev=(mux-mix)/6
-             for lx in range(0,6):
-                 lels.append(mix+lx*deltalev)
         fig=plt.figure(figsize=(20,4))
-        CS=plt.contour(xdat,ylevs,zdat,levels=lels)
+        CS=plt.contour(xdat,ylevs,zdat,levels=lels[m,:])
         plt.clabel(CS,inline=1,fontsize=12)
         plt.axis([0, 368, 1000, 10])
         plt.title(nms[m])
