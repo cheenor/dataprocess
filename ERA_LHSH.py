@@ -129,15 +129,15 @@ for iv in range(0,nvar):
     f.write(itme)
     itme="%s "%'DJF_LH'
     f.write(itme)
-    itme="%s "%'MAM'
+    itme="%s "%'MAM_SH'
     f.write(itme)
     itme="%s "%'MAM_LH'
     f.write(itme)
-    itme="%s "%'JJA'
+    itme="%s "%'JJA_SH'
     f.write(itme)
     itme="%s "%'JJA_LH'
     f.write(itme)
-    itme="%s "%'SON'
+    itme="%s "%'SON_SH'
     f.write(itme)
     itme="%s "%'SON_LH'
     f.write(itme)    

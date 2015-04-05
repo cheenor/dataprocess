@@ -6,7 +6,7 @@ Created on Thu Mar 05 12:40:54 2015
 @author: jhchen
 """
 from netCDF4 import Dataset
-from mpl_toolkits.basemap import Basemap, cm
+from mpl_toolkits.basemap import Basemap
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy import meshgrid
