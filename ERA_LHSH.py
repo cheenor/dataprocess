@@ -76,9 +76,15 @@ for ix in range(0,nx):
             tmp2=0.0
             for j in range(0,8):
                 ij=im*8+j
-                tscale=fhours[j]*3600.
-                tmp1=tmp1+sho[ij,iy,ix]/tscale
-                tmp2=tmp2+lho[ij,iy,ix]/tscale
+                if j==0 or j==4 :
+#                tscale=fhours[j]*3600.
+                    tscale=3*3600.
+                    tmp1=tmp1+sho[ij,iy,ix]/tscale
+                    tmp2=tmp2+lho[ij,iy,ix]/tscale
+                else:
+                    tscale=3*3600.
+                    tmp1=tmp1+(sho[ij,iy,ix]-sho[ij-1,iy,ix])/tscale
+                    tmp2=tmp2+(lho[ij,iy,ix]-lho[ij-1,iy,ix])/tscale
 #                tscale=3*3600.
 #                if j==0 or j==3:
 #                    tmp1=tmp1+sho[ij,iy,ix]/tscale
@@ -121,7 +127,7 @@ for ix in range(0,nx):
                 lho_sea2[iy,ix,ise,iyr]=lho_sea[iy,ix,ij]
 nvar=len(rgnm)
 for iv in range(0,nvar):
-    fpath=dirout+rgnm[iv]+datname+"_lhsh_1979-2014.txt"
+    fpath=dirout+rgnm[iv]+datname+"_lhsh_1979-2014_2.txt"
     f=open(fpath,'w')
     itme="%s "%'Year'
     f.write(itme)

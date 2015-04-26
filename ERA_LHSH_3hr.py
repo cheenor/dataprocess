@@ -12,6 +12,7 @@ import string
 import calendar
 #...........setting---------------
 dirin='D:/Data/ERA_Interim_LHSH/'
+dirrain='X:/Data/ERA_interim/Rain/'
 dirout=dirin #'D:/MyPaper/Phd01/Submitted/RV01/data/'
 fname='surface_LHSH_monthlymeans.nc'
 datname='ERA_interim'
@@ -53,7 +54,6 @@ slat.append(25-2.5)  ;  elat.append(40+2.5)
 #
 ngns=len(rgnm)
 fhours=[3,6,9,12,3,6,9,12]
-"""
 for iyear1 in year:
     iyear2=iyear1+1
     yearstr1="%04d"%(iyear1)
@@ -79,6 +79,26 @@ for iyear1 in year:
     sho_scale = sflux.variables['sshf'].scale_factor
     sho_offset = sflux.variables['sshf'].add_offset
     lho=sflux.variables['slhf'][:]  # timexnlatxnlon
+#
+    fpath=dirrain+yearstr1+'-'+yearstr2+'_rain.nc'
+    sflux=Dataset(fpath,'a')
+    lon_r=sflux.variables['longitude'][:]   # read 
+    lat_r=sflux.variables['latitude'][:]
+    time_r=sflux.variables['time'][:]
+    ntr=len(time_r)
+    nyr=len(lat_r)
+    nxr=len(lon_r)
+    del time_r 
+    nt1=365*8
+    nt2=365*8
+    if calendar.isleap(iyear1):
+        nt1=366*8
+    if calendar.isleap(iyear2) :
+        nt2=366*8    
+    tp=sflux.variables['tp'][:]  # timexnlatxnlon
+    cp=sflux.variables['cp'][:]  # timexnlatxnlon
+    cp_units = sflux.variables['cp'].units
+    tp_units = sflux.variables['tp'].units 
     for ir in range(0,ngns):
         for i in range(0,2):
             if i==0:
@@ -89,17 +109,23 @@ for iyear1 in year:
                 yearstr=yearstr2
                 its=nt1
                 ite=nt1+nt2 
-            fpath=dirout+rgnm[ir]+yearstr+"_lhsh.txt"
+            fpath=dirout+rgnm[ir]+yearstr+"_lhsh_rain.txt"
             fout=open(fpath,'w')
             itme="%s "%'Timestep'
             fout.write(itme)
-            itme="%s "%'SH'
+            itme="%s "%('SH'+'(W m-2)')
             fout.write(itme)
-            itme="%s "%'LH'
+            itme="%s "%('LH'+'(W m-2)')
+            fout.write(itme)
+            itme="%s "%('Total prep'+'(mm hr)')
+            fout.write(itme)
+            itme="%s "%('conv. prep'+'(mm hr-1)')
             fout.write(itme)
             fout.write('\n')
+            itt=0
+            nty=nt2
             for it in range(its,ite):
-                j=it%8
+                j=itt%8
                 tmp1=0.0
                 tmp2=0.0
                 cont=0.0
@@ -108,22 +134,59 @@ for iyear1 in year:
                     if lon[ix]>(slon[ir]+2.5) and lon[ix]<(elon[ir]-2.5):
                         for iy in range(0,ny):
                             if lat[iy]>slat[ir] and lat[iy]<elat[ir]:
-                                tscale=-fhours[j]*3600.
-                                tmp1=tmp1+sho[it,iy,ix]/tscale
-                                tmp2=tmp2+lho[it,iy,ix]/tscale
-                                cont+=1
+#                                tscale=-fhours[j]*3600.
+                                tscale=-3*3600
+#                                tmp1=tmp1+sho[it,iy,ix]/tscale
+#                                tmp2=tmp2+lho[it,iy,ix]/tscale
+#                                cont+=1
+                                if j==0 or j==4:
+                                    tmp1=tmp1+sho[it,iy,ix]/tscale    #convert unit
+                                    tmp2=tmp2+lho[it,iy,ix]/tscale
+                                    cont+=1 
+                                else:
+                                    tmp1=tmp1+(sho[it,iy,ix]-sho[it-1,iy,ix])/tscale    #convert unit
+                                    tmp2=tmp2+(lho[it,iy,ix]-lho[it-1,iy,ix])/tscale
+                                    cont+=1
                 tmp1=tmp1/cont
                 tmp2=tmp2/cont
-                itme="%d "%(it)
+                itme="%d "%(itt+1)
                 fout.write(itme)
                 itme="%f "%(tmp1)
                 fout.write(itme)
                 itme="%f "%(tmp2)
                 fout.write(itme)
-                fout.write('\n')
+#                              
+# -----------------------------------------------------------------------------                                
+#                j=itt%8
+                tmp1=0.0
+                tmp2=0.0
+                cont=0.0
+                avg=0.0
+                for ix in range(0,nxr):
+                    if lon_r[ix]>(slon[ir]+2.5) and lon_r[ix]<(elon[ir]-2.5):
+                        for iy in range(0,nyr):
+                            if lat_r[iy]>slat[ir] and lat_r[iy]<elat[ir]:
+                                if j==0 or j==4:
+                                    tmp1=tmp1+tp[it,iy,ix]*1000./3.    #convert m to mm hr-1
+                                    tmp2=tmp2+cp[it,iy,ix]*1000./3.
+                                    cont+=1
+                                else:
+                                    tmp1=tmp1+(tp[it,iy,ix]-tp[it-1,iy,ix])*1000./3.    #convert m to mm hr-1
+                                    tmp2=tmp2+(cp[it,iy,ix]-cp[it-1,iy,ix])*1000./3.
+                                    cont+=1
+#                                    if tp[it,iy,ix]-tp[it-1,iy,ix] <0 or cp[it,iy,ix]-cp[it-1,iy,ix] <0 :
+#                                        print 'tmp1=',tmp1,'tmp2=',tmp2, it
+                tmp1=tmp1/cont
+                tmp2=tmp2/cont
+                itme="%f "%(tmp1)
+                fout.write(itme)
+                itme="%f "%(tmp2)
+                fout.write(itme)
+                itt=itt+1
+#
+                fout.write('\n')                              
             fout.close()
     del lon,lat,sho,lho
-"""
 #Check   using the monthly data checking
 dirin='X:/Data/ERA_interim/SRFX2.5/'
 fname='surface_LHSH_monthlymeans.nc'
@@ -148,10 +211,19 @@ for ix in range(0,nx):
             tmp1=0.0
             tmp2=0.0
             for j in range(0,8):
+#                ij=im*8+j
+#                tscale=fhours[j]*3600.
+#                tmp1=tmp1+sho[ij,iy,ix]/tscale
+#                tmp2=tmp2+lho[ij,iy,ix]/tscale 
                 ij=im*8+j
-                tscale=fhours[j]*3600.
-                tmp1=tmp1+sho[ij,iy,ix]/tscale
-                tmp2=tmp2+lho[ij,iy,ix]/tscale                  
+                if j==0 or j==4 :
+                    tscale=3*3600.
+                    tmp1=tmp1+sho[ij,iy,ix]/tscale
+                    tmp2=tmp2+lho[ij,iy,ix]/tscale
+                else:
+                    tscale=3*3600.
+                    tmp1=tmp1+(sho[ij,iy,ix]-sho[ij-1,iy,ix])/tscale
+                    tmp2=tmp2+(lho[ij,iy,ix]-lho[ij-1,iy,ix])/tscale                 
             sho_mon[iy,ix,im]=tmp1/8.
             lho_mon[iy,ix,im]=tmp2/8.
             im+=1
@@ -171,7 +243,7 @@ for im in range(0,12):
                     itmp+=1.
     sho_etp[im]=-tmp1/itmp
     lho_etp[im]=-tmp2/itmp
-fpath=dirout+"ETP1979_lhsh.txt"
+fpath=dirout+"ETP1979_lhsh_2.txt"
 f=open(fpath)
 ff=f.readlines()[1:]
 onedim=[]
@@ -204,6 +276,7 @@ for im in range(0,12):
     for it in range(its,ite):
         tmp1=tmp1+shlh[0,it]
         tmp2=tmp2+shlh[1,it]
+#        print tmp1,tmp2,it
     sho_etp2[im]=tmp1/rtt
     lho_etp2[im]=tmp2/rtt
 #
