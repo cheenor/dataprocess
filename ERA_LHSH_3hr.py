@@ -151,8 +151,8 @@ for iyear1 in year:
                 tmp2=tmp2/cont
                 itme="%d "%(itt+1)
                 fout.write(itme)
-                itme="%f "%(tmp1)
-                fout.write(itme)
+                itme="%f "%(tmp1)  # sh
+                fout.write(itme)   # lh
                 itme="%f "%(tmp2)
                 fout.write(itme)
 #                              
